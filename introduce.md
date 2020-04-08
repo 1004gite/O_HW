@@ -1,3 +1,8 @@
-##introdude
-#our team has 5 members
-#first commit
+introdue
+=======
+##our team has 5 members
+*17
+kimgitae
+yoonchanwoong
+jungchungho
+#second commit
