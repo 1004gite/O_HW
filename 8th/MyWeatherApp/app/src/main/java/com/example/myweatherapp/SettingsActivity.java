@@ -40,17 +40,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new MypreferenceFragment()).commit();
-    }
+        addPreferencesFromResource(R.xml.pref_general);
 
-    public static class MypreferenceFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_general);
-            bindPreferenceSummaryToValue(findPreference("city"));
-
-        }
+        bindPreferenceSummaryToValue(findPreference("city"));
     }
 
     /**
@@ -102,6 +94,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 // simple string representation.
                 preference.setSummary(stringValue);
             }
+
             return true;
         }
     };
