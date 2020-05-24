@@ -38,7 +38,6 @@ import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
 import com.example.myweatherapp.provider.WeatherContract;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,18 +50,10 @@ import java.util.List;
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int FORECAST_LOADER = 0;
-
-    //private ArrayAdapter<String> mForecastAdapter;
     private WeatherForecastAdapter mForecastAdapter;
     private IFetchWeatherService mService;
 
     private static final String[] FORECAST_COLUMNS = {
-            // In this case the id needs to be fully qualified with a table name, since
-            // the content provider joins the location & weather tables in the background
-            // (both have an _id column)
-            // On the one hand, that's annoying.  On the other, you can search the weather table
-            // using the location set by the user, which is only in the Location table.
-            // So the convenience is worth it.
             WeatherContract.WeatherColumns._ID,
             WeatherContract.WeatherColumns.COLUMN_DATE,
             WeatherContract.WeatherColumns.COLUMN_SHORT_DESC,
@@ -82,13 +73,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals(FetchWeatherService.ACTION_RETRIEVE_WEATHER_DATA)) {
-                /*
-                String[] data = intent.getStringArrayExtra(FetchWeatherService.EXTRA_WEATHER_DATA);
-                mForecastAdapter.clear();
-                for(String dayForecastStr : data) {
-                    mForecastAdapter.add(dayForecastStr);
-                }
-                */
             }
         }
     };
@@ -140,6 +124,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         setHasOptionsMenu(true);
 
         getActivity().bindService(new Intent(getActivity(), FetchWeatherService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+
     }
 
     @Override
@@ -166,6 +151,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if (id == R.id.action_refresh) {
 
             refreshWeatherData();
+            Toast.makeText(getActivity(),"새로고침 완료",Toast.LENGTH_SHORT).show();
             return true;
         }
 
@@ -190,48 +176,32 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Create some dummy data for the ListView.  Here's a sample weekly forecast
-        String[] data = {
-                "Mon 6/23 - Sunny - 31/17",
-                "Tue 6/24 - Foggy - 21/8",
-                "Wed 6/25 - Cloudy - 22/17",
-                "Thurs 6/26 - Rainy - 18/11",
-                "Fri 6/27 - Foggy - 21/10",
-                "Sat 6/28 - TRAPPED IN WEATHERSTATION - 23/18",
-                "Sun 6/29 - Sunny - 20/7"
-        };
-
-        List<String> weekForecast = new ArrayList<String>(Arrays.asList(data));
-
-        // Now that we have some dummy forecast data, create an ArrayAdapter.
-        // The ArrayAdapter will take data from a source (like our dummy forecast) and
-        // use it to populate the ListView it's attached to.
-        /*
-        mForecastAdapter =
-                new ArrayAdapter<String>(
-                        getActivity(), // The current context (this activity)
-                        R.layout.list_item_forecast, // The name of the layout ID.
-                        R.id.list_item_forecast_textview, // The ID of the textview to populate.
-                        weekForecast);
-        */
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_forecast, container, false);
         mForecastAdapter = new WeatherForecastAdapter(getActivity(), null, 0);
         // Get a reference to the ListView, and attach this adapter to it.
-        ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
+        final ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(mForecastAdapter);
-
+        refreshWeatherData();
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                /*
-                String forecast = mForecastAdapter.getItem(position);
-                Toast.makeText(getActivity(), forecast, Toast.LENGTH_SHORT).show();
+
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra("data", forecast);
+
+                Cursor cursor = (Cursor) mForecastAdapter.getItem(position);
+                String date = cursor.getString(1);
+                String short_desc = cursor.getString(2);
+                String max = cursor.getString(3);
+                String min = cursor.getString(4);
+                //////////////////////////////////////
+                /* id /date /short_desc /max /min
                 */
+                String data = " 날씨        : "+short_desc+"\n"+" 최고기온 : "+max+"\n"+" 최저기온 : "+min+"\n";
+                intent.putExtra("data", data);
+                startActivity(intent);
             }
         });
 
