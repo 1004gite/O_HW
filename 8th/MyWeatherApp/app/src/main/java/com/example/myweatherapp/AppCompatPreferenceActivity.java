@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.LayoutRes;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
@@ -37,7 +38,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         return getDelegate().getSupportActionBar();
     }
 
-    public void setSupportActionBar(Toolbar toolbar) {
+    public void setSupportActionBar(@Nullable Toolbar toolbar) {
         getDelegate().setSupportActionBar(toolbar);
     }
 

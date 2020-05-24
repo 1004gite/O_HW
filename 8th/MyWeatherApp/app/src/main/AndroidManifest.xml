@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -24,13 +26,19 @@
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.myweatherapp.MainActivity" />
+                android:value=".MainActivity" />
         </activity>
 
         <service
             android:name=".FetchWeatherService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <provider
+            android:name=".provider.WeatherProvider"
+            android:authorities="com.example.myweatherapp"
+            android:enabled="true"
+            android:exported="true"></provider>
     </application>
 
 </manifest>
